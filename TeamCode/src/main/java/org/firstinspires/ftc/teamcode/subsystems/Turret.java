@@ -27,18 +27,14 @@ public class Turret implements Subsystem {
 
     public MotorEx turret = new MotorEx("turret");
     public static boolean alignment = false;
-
+    public static double sotmAngularOffset = 0.0;
     private ControlSystem controlSystem = ControlSystem.builder()
-            .posPid(0.0065,0.0,0.000175)
+            .posPid(0.005,0.0,0.000175)
             .basicFF(0,0,0.08)
             .build();
 
     public Command runTurretToPosition(double position){
         return new RunToPosition(controlSystem,position,30).requires(this);
-    }
-    public Command resetTurretEncoder(){
-        turret.zero();
-        return new NullCommand();
     }
     private enum AlignmentMode{
         Limelight,
@@ -58,21 +54,18 @@ public class Turret implements Subsystem {
 
         LLResult result = Limelight.INSTANCE.getLatestResult();
         if(!alignment) state = AlignmentMode.OFF;
-        else if(result.isValid()) state = AlignmentMode.Limelight;
+        else if(result.isValid()&&Math.abs(result.getFiducialResults().get(0).getTargetXDegrees())<10) state = AlignmentMode.Limelight;
         else state = AlignmentMode.Odometry;
         switch(state){
             case Limelight:
                 if(result.isValid()){
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                        double target = turret.getCurrentPosition() + fr.getTargetXDegrees()*2.872;
-                        controlSystem.setGoal(new KineticState(target,Math.signum(target - turret.getCurrentPosition())));
-
-                        //ActiveOpMode.telemetry().addData("tx", tx);
-                        //ActiveOpMode.telemetry().addData("pos", current);
-                        //ActiveOpMode.telemetry().addData("goal", target);
-                        //ActiveOpMode.telemetry().addData("err(goal-pos)", target - current);
-
+                        double adjustedTx = fr.getTargetXDegrees(); // <-- apply offset
+                        double target = turret.getCurrentPosition() + adjustedTx * 2.872;
+                        if(Math.abs(adjustedTx)>2){
+                            controlSystem.setGoal(new KineticState(target, Math.signum(target - turret.getCurrentPosition())));
+                        }
                     }
                 }
                 else controlSystem.setGoal(new KineticState(turret.getCurrentPosition(),Math.signum(turret.getCurrentPosition() - turret.getCurrentPosition())));

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,11 +21,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 import java.util.List;
 
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.core.units.Angle;
+import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
+import dev.nextftc.extensions.pedro.TurnBy;
+import dev.nextftc.extensions.pedro.TurnTo;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -58,32 +65,61 @@ public class Teleop extends NextFTCOpMode {
 
     private boolean runShooter = false;
     public double transferPower = 0.5;
-
-
+    DriverControlledCommand driverControlled = new PedroDriverControlled(
+            Gamepads.gamepad1().rightStickY().negate(),
+            Gamepads.gamepad1().rightStickX().negate(),
+            Gamepads.gamepad1().leftStickX().map(value -> 0.5*value).negate()
+    );
     public static Follower getFollower(){
         return PedroComponent.follower();
     }
+
+    private Command park(Pose botPose){
+        PathChain move = PedroComponent.follower().pathBuilder().addPath(new BezierLine(botPose, new Pose(botPose.getX()+2,botPose.getY()+29)))
+                .setLinearHeadingInterpolation(botPose.getHeading(), botPose.getHeading()-Math.toRadians(45))
+                .build();
+        return new FollowPath(move);
+    }
+    private Command moveUp(){
+        PathChain move = PedroComponent.follower().pathBuilder().addPath(new BezierLine(PedroComponent.follower().getPose(), new Pose(PedroComponent.follower().getPose().getX(),PedroComponent.follower().getPose().getY()+.75)))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getPose().getHeading(), PedroComponent.follower().getPose().getHeading())
+                .build();
+        return new FollowPath(move);
+    }
+    private Command moveDown(){
+        PathChain move = PedroComponent.follower().pathBuilder().addPath(new BezierLine(PedroComponent.follower().getPose(), new Pose(PedroComponent.follower().getPose().getX(),PedroComponent.follower().getPose().getY()-.75)))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getPose().getHeading(), PedroComponent.follower().getPose().getHeading())
+                .build();
+        return new FollowPath(move);
+    }
+    private Command moveLeft(){
+        PathChain move = PedroComponent.follower().pathBuilder().addPath(new BezierLine(PedroComponent.follower().getPose(), new Pose(PedroComponent.follower().getPose().getX()-.75,PedroComponent.follower().getPose().getY())))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getPose().getHeading(), PedroComponent.follower().getPose().getHeading())
+                .build();
+        return new FollowPath(move);
+    }
+    private Command moveRight(){
+        PathChain move = PedroComponent.follower().pathBuilder().addPath(new BezierLine(PedroComponent.follower().getPose(), new Pose(PedroComponent.follower().getPose().getX()+.75,PedroComponent.follower().getPose().getY())))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getPose().getHeading(), PedroComponent.follower().getPose().getHeading())
+                .build();
+        return new FollowPath(move);
+    }
+
     @Override
     public void onStartButtonPressed() {
-        DriverControlledCommand driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().rightStickY().negate(),
-                Gamepads.gamepad1().rightStickX().negate(),
-                Gamepads.gamepad1().leftStickX().map(value -> 0.5*value).negate()
-        );
+
+
+        Turret.INSTANCE.turret.setCurrentPosition(Data.turretPos);
         Turret.alignment=true;
         driverControlled.schedule();
         Lift.INSTANCE.holdPlate().schedule();
         Gamepads.gamepad1().circle().whenBecomesTrue(Intake.INSTANCE.runIntake);
         Gamepads.gamepad1().square().whenBecomesTrue(Intake.INSTANCE.runIntakeReverse);
         Gamepads.gamepad1().dpadRight().whenBecomesTrue(Intake.INSTANCE.stopIntake);
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(0.4)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-
-        Gamepads.gamepad1().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(0.7)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-        //Gamepads.gamepad1().dpadUp().whenBecomesTrue(Shooter.INSTANCE.runFlywheelClose.and(Hood.INSTANCE.close));
-        //Gamepads.gamepad1().dpadDown().whenBecomesTrue(Shooter.INSTANCE.runFlywheelFar.and(Hood.INSTANCE.up));
-        Gamepads.gamepad1().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(1.0)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-        Gamepads.gamepad2().circle().whenBecomesTrue(Lift.INSTANCE.lift()).whenBecomesFalse(Lift.INSTANCE.holdLift());
-
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(Transfer.INSTANCE.tapFire());
+        Gamepads.gamepad1().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(1)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
+        Gamepads.gamepad2().circle().whenBecomesTrue(Lift.INSTANCE.lift().and(driverControlled)).whenBecomesFalse(Lift.INSTANCE.holdLift());
+        Gamepads.gamepad2().triangle().whenBecomesTrue(Lift.INSTANCE.retract()).whenBecomesFalse(Lift.INSTANCE.holdLift());
     }
     @Override
     public void onInit(){
@@ -103,7 +139,6 @@ public class Teleop extends NextFTCOpMode {
         } else {
             PedroComponent.follower().setStartingPose(new Pose(72,72,Math.toRadians(90)));
         }
-
         telemetry.update();
         //Limelight.INSTANCE.limelight.pipelineSwitch(1);
     }
@@ -118,11 +153,14 @@ public class Teleop extends NextFTCOpMode {
             runShooter = false;
             Turret.alignment = false;
         }
-        //if(gamepad2.cross){
-        //    PedroComponent.follower().setPose(new Pose(135,9,Math.toRadians(90)));
-        //}
-        //if(gamepad1.right_bumper) Transfer.INSTANCE.runTransfer(transferPower).schedule();
-        //else Transfer.INSTANCE.runTransfer(0.0).schedule();
+        if(gamepad1.right_trigger_pressed) driverControlled.setScalar(0.25);
+        else driverControlled.setScalar(1.0);
+
+        if(gamepad2.dpadUpWasPressed()) moveUp().schedule();
+        if(gamepad2.dpadDownWasPressed()) moveDown().schedule();
+        if(gamepad2.dpadLeftWasPressed()) moveLeft().schedule();
+        if(gamepad2.dpadRightWasPressed()) moveRight().schedule();
+        if(gamepad2.squareWasPressed()) park(PedroComponent.follower().getPose()).schedule();
         if(result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
@@ -137,9 +175,6 @@ public class Teleop extends NextFTCOpMode {
                     Shooter.INSTANCE.calculateFlywheel(distance).schedule();
                     Hood.INSTANCE.calculateAngle(distance).schedule();
                 }
-                else{
-                    Shooter.INSTANCE.stopFlywheel.schedule();
-                }
 
 
                 //transferPower = Calculations.getTransferSpeed(distance);
@@ -149,7 +184,18 @@ public class Teleop extends NextFTCOpMode {
 
             }
         }
+        /*
+        else{
+            if(runShooter){
+                Shooter.INSTANCE.calculateFlywheel(Calculations.getDist(PedroComponent.follower().getPose())).schedule();
+                Hood.INSTANCE.calculateAngle(Calculations.getDist(PedroComponent.follower().getPose())).schedule();
+            }
+        }
 
+         */
+        if(!runShooter){
+            Shooter.INSTANCE.stopFlywheel.schedule();
+        }
         //telemetry.addData("distance", Math.hypot(Calculations.redGoalPose.getY()-PedroComponent.follower().getPose().getY(),Calculations.redGoalPose.getX()-PedroComponent.follower().getPose().getX()));
         telemetry.addData("x y heading", PedroComponent.follower().getPose().getX() + ", "+ PedroComponent.follower().getPose().getY()+ ", "+ PedroComponent.follower().getPose().getHeading());
         telemetry.addData("Commands", CommandManager.INSTANCE.snapshot());

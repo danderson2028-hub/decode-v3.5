@@ -36,21 +36,32 @@ public class Transfer implements Subsystem {
     */
     public Command fireClose(){
         return new SequentialGroup(
-                new SetPower(transfer,0.9),
-                new Delay(1),
+                new SetPower(transfer,1),
+                new Delay(.65),
                 new SetPower(transfer,0.0)
         );
     }
-
+    public Command tapFire(){
+        return new SequentialGroup(
+                new SetPower(transfer,1),
+                new Delay(0.04),
+                new SetPower(transfer,0.0),
+                new Delay(0.8)
+        );
+    }
     public Command fireFar(){
         return new SequentialGroup(
                 new SetPower(transfer,1),
-                new Delay(0.5),
+                new Delay(0.03),
                 new SetPower(transfer,0.0),
-                new Delay(0.5),
+                new Delay(0.8),
                 new SetPower(transfer,1),
-                new Delay(0.5),
-                new SetPower(transfer,0)
+                new Delay(0.05),
+                new SetPower(transfer,0.0),
+                new Delay(0.8),
+                new SetPower(transfer,1),
+                new Delay(0.05),
+                new SetPower(transfer,0.0)
 
         );
     }

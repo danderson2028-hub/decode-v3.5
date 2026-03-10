@@ -33,8 +33,8 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class Blue18 extends NextFTCOpMode {
-    public Blue18(){
+public class Compatible18Red extends NextFTCOpMode {
+    public Compatible18Red(){
         addComponents(
                 new SubsystemComponent(
                         Hood.INSTANCE,
@@ -51,55 +51,48 @@ public class Blue18 extends NextFTCOpMode {
         );
     }
     TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-    private final Pose startPose = new Pose(28.5,128.5  , Math.toRadians(180));
-    private final Pose shootPose = new Pose(51,93, Math.toRadians(180));
-    private final Pose intakeMidPose = new Pose(12,58,Math.toRadians(180));
-    private final Pose gatePose = new Pose(12,64.5, Math.toRadians(140));
-    private final Pose clearGatePose = new Pose(12,60, Math.toRadians(120));
-    private final Pose shoot2Pose = new Pose(51,93, Math.toRadians(135));
-    private final Pose intakeFarPose = new Pose(9,36, Math.toRadians(180));
-    private final Pose intakeClosePose = new Pose(15,84, Math.toRadians(180));
-    private final Pose leavePose = new Pose(57,108, Math.toRadians(155));
+    private final Pose startPose = new Pose(28.5,128.5  , Math.toRadians(180)).mirror();
+    private final Pose shootPose = new Pose(51,93, Math.toRadians(180)).mirror();
+    private final Pose intakeMidPose = new Pose(14,58,Math.toRadians(180)).mirror();
+    private final Pose gatePose = new Pose(14,63.5, Math.toRadians(140)).mirror();
+    private final Pose clearGatePose = new Pose(12.5,59, Math.toRadians(120)).mirror();
+    private final Pose shoot2Pose = new Pose(51,93, Math.toRadians(135)).mirror();
+    private final Pose intakeClosePose = new Pose(17,85, Math.toRadians(180)).mirror();
+    private final Pose leavePose = new Pose(57,108, Math.toRadians(150)).mirror();
 
 
 
-    private PathChain shoot1,intakeMid, shoot2, gate1, clear1, shoot3, gate2, clear2, shoot4, intakeFar, shoot5,intakeClose,leave;
+    private PathChain shoot1,intakeMid, shoot2, gate1, clear1, shoot3, gate2, clear2, shoot4, intakeClose,leave;
 
     public void buildPaths() {
         shoot1 = PedroComponent.follower().pathBuilder().addPath(new BezierLine(startPose,shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
-        intakeMid = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(51,48),intakeMidPose))
+        intakeMid = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(51,48).mirror(),intakeMidPose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), intakeMidPose.getHeading())
                 .build();
-        shoot2 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(intakeMidPose, new Pose(48,63),shootPose))
+        shoot2 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(intakeMidPose, new Pose(48,63).mirror(),shootPose))
                 .setLinearHeadingInterpolation(intakeMidPose.getHeading(), shootPose.getHeading())
                 .build();
-        gate1 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(48,63),gatePose))
+        gate1 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(48,63).mirror(),gatePose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), gatePose.getHeading())
                 .build();
         clear1 = PedroComponent.follower().pathBuilder().addPath(new BezierLine(gatePose,clearGatePose))
                 .setLinearHeadingInterpolation(gatePose.getHeading(), clearGatePose.getHeading())
                 .build();
-        shoot3 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(clearGatePose, new Pose(48,63),shoot2Pose))
+        shoot3 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(clearGatePose, new Pose(48,63).mirror(),shoot2Pose))
                 .setLinearHeadingInterpolation(clearGatePose.getHeading(), shoot2Pose.getHeading())
                 .build();
-        gate2 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(48,63),gatePose))
+        gate2 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose, new Pose(48,63).mirror(),gatePose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), gatePose.getHeading())
                 .build();
         clear2 = PedroComponent.follower().pathBuilder().addPath(new BezierLine(gatePose,clearGatePose))
                 .setLinearHeadingInterpolation(gatePose.getHeading(), clearGatePose.getHeading())
                 .build();
-        shoot4 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(clearGatePose, new Pose(48,63),shoot2Pose))
+        shoot4 = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(clearGatePose, new Pose(48,63).mirror(),shoot2Pose))
                 .setLinearHeadingInterpolation(clearGatePose.getHeading(), shoot2Pose.getHeading())
                 .build();
-        intakeFar = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shoot2Pose, new Pose(39.000, 21.000), new Pose(48.000, 39.000),intakeFarPose))
-                .setLinearHeadingInterpolation(shoot2Pose.getHeading(), intakeFarPose.getHeading())
-                .build();
-        shoot5 = PedroComponent.follower().pathBuilder().addPath(new BezierLine(intakeFarPose,shootPose))
-                .setLinearHeadingInterpolation(intakeFarPose.getHeading(), shootPose.getHeading())
-                .build();
-        intakeClose = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose,new Pose(45,78),intakeClosePose))
+        intakeClose = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose,new Pose(45,78).mirror(),intakeClosePose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), intakeClosePose.getHeading())
                 .build();
         leave = PedroComponent.follower().pathBuilder().addPath(new BezierLine(intakeClosePose,leavePose))
@@ -112,54 +105,54 @@ public class Blue18 extends NextFTCOpMode {
                 new ParallelGroup(
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelClose,
-                        Turret.INSTANCE.runTurretToPosition(133),
+                        Turret.INSTANCE.runTurretToPosition(-133),
                         new FollowPath(shoot1,true),
                         Hood.INSTANCE.close
 
                 ),
 
-                Transfer.INSTANCE.fireClose(),
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(intakeMid,true),
                 new FollowPath(shoot2,true),
-                Transfer.INSTANCE.fireClose(),
-
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(gate1,true),
-
-                new Delay(.3),
+                new Delay(.5),
                 new FollowPath(clear1,true),
-
                 new Delay(1),
                 new ParallelGroup(
                         new FollowPath(shoot3,true),
                         Turret.INSTANCE.runTurretToPosition(0)
                 ),
-                Transfer.INSTANCE.fireClose(),
-
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(gate2,true),
-                new Delay(.3),
+                new Delay(.5),
                 new FollowPath(clear2,true),
                 new Delay(1),
                 new FollowPath(shoot4,true),
-                Transfer.INSTANCE.fireClose(),
-
-                new FollowPath(intakeFar,true),
-                new ParallelGroup(
-                        new FollowPath(shoot5,true),
-                        Turret.INSTANCE.runTurretToPosition(133)
-                ),
-                Transfer.INSTANCE.fireClose(),
-
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0),
+                new FollowPath(gate2,true),
+                new Delay(.5),
+                new FollowPath(clear2,true),
+                new Delay(1),
+                new FollowPath(shoot4,true),
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(intakeClose,true),
-                new ParallelGroup(
-                        new FollowPath(leave,true),
-                        Turret.INSTANCE.runTurretToPosition(0)
-                ),
-                Transfer.INSTANCE.fireClose()
+                new FollowPath(leave,true),
+                Transfer.INSTANCE.runTransfer(1.0),
+                new Delay(.5),
+                Transfer.INSTANCE.runTransfer(0.0)
 
-
-                );
-
-
+        );
 
     }
     @Override

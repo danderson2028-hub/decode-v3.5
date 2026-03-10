@@ -35,14 +35,14 @@ public class Lift implements Subsystem {
 
     public Command holdPlate(){
         return new ParallelGroup(
-                new SetPower(liftLeft, 0.05)
-                //new SetPower(liftRight, -0.05)
+                new SetPower(liftLeft, 0.0),
+                new SetPower(liftRight, -0.0)
         );
     }
     public Command holdLift(){
         return new ParallelGroup(
-                new SetPower(liftLeft, -0.2),
-                new SetPower(liftRight, 0.2)
+                new SetPower(liftLeft, -0.175),
+                new SetPower(liftRight, 0.175)
         );
     }
     public Command lift(){
@@ -51,6 +51,13 @@ public class Lift implements Subsystem {
                 new SetPower(liftRight, 0.9)
         );
     }
+    public Command retract(){
+        return new ParallelGroup(
+                new SetPower(liftLeft, .05),
+                new SetPower(liftRight, -.05)
+        );
+    }
+
 
     @Override
     public void periodic(){

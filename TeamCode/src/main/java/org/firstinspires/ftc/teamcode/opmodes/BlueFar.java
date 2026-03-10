@@ -31,8 +31,8 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 @Autonomous (name = "Blue Far")
-public class CombinedAuto extends NextFTCOpMode {
-    public CombinedAuto(){
+public class BlueFar extends NextFTCOpMode {
+    public BlueFar(){
         addComponents(
                 new SubsystemComponent(Hood.INSTANCE, Intake.INSTANCE, Shooter.INSTANCE, Transfer.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -99,10 +99,7 @@ public class CombinedAuto extends NextFTCOpMode {
                         Turret.INSTANCE.runTurretToPosition(-65),
                         Hood.INSTANCE.up
                 ),
-                Transfer.INSTANCE.runTransfer(0.35),
-                new Delay(1.5),
-
-                Transfer.INSTANCE.runTransfer(0.0),
+                Transfer.INSTANCE.fireFar(),
                 new FollowPath(preIntake,true),
                 new FollowPath(intake,true),
                 new ParallelGroup(
@@ -110,27 +107,19 @@ public class CombinedAuto extends NextFTCOpMode {
                         Turret.INSTANCE.runTurretToPosition(197)
                 ),
                 new Delay(.25),
-                Transfer.INSTANCE.runTransfer(0.35),
-                new Delay(1.5),
-                Transfer.INSTANCE.runTransfer(0.0),
+                Transfer.INSTANCE.fireFar(),
                 new FollowPath(intake2,true),
                 new FollowPath(shoot2,true),
                 new Delay(.25),
-                Transfer.INSTANCE.runTransfer(0.35),
-                new Delay(1.5),
-                Transfer.INSTANCE.runTransfer(0.0),
+                Transfer.INSTANCE.fireFar(),
                 new FollowPath(intake3,true),
                 new FollowPath(shoot3,true),
                 new Delay(.25),
-                Transfer.INSTANCE.runTransfer(0.35),
-                new Delay(1.5),
-                Transfer.INSTANCE.runTransfer(0.0),
+                Transfer.INSTANCE.fireFar(),
                 new FollowPath(intake4,true),
                 new FollowPath(shoot4,true),
                 new Delay(.25),
-                Transfer.INSTANCE.runTransfer(0.35),
-                new Delay(1.5),
-                Transfer.INSTANCE.runTransfer(0.0),
+                Transfer.INSTANCE.fireFar(),
                 new ParallelGroup(
                         new FollowPath(leave,true),
                         Turret.INSTANCE.runTurretToPosition(0)
@@ -163,6 +152,7 @@ public class CombinedAuto extends NextFTCOpMode {
         if(!PedroComponent.follower().getPose().roughlyEquals(new Pose(0,0,0),5)){
             Data.endPose = PedroComponent.follower().getPose();
         }
+        Data.turretPos=Turret.INSTANCE.turret.getCurrentPosition();
         panelsTelemetry.update(telemetry);
     }
 

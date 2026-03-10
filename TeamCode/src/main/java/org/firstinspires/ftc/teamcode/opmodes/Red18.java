@@ -90,7 +90,7 @@ public class Red18 extends NextFTCOpMode {
         shoot5 = PedroComponent.follower().pathBuilder().addPath(new BezierLine(intakeFarPose,shootPose))
                 .setLinearHeadingInterpolation(intakeFarPose.getHeading(), shootPose.getHeading())
                 .build();
-        intakeClose = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose,new Pose(45,78),intakeClosePose))
+        intakeClose = PedroComponent.follower().pathBuilder().addPath(new BezierCurve(shootPose,new Pose(45,78).mirror(),intakeClosePose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), intakeClosePose.getHeading())
                 .build();
         leave = PedroComponent.follower().pathBuilder().addPath(new BezierLine(intakeClosePose,leavePose))

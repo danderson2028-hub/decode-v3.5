@@ -42,7 +42,7 @@ public class Calculations {
     }
 
     public static double getShooterRPM(double distance){
-        double rpm = 0.0000310481*Math.pow(distance,4)-0.0100608* Math.pow(distance,3) +1.13175*Math.pow(distance,2)-47.18133*distance+1657.92985;
+        double rpm = 0.0000227932*Math.pow(distance,4)-0.00738406* Math.pow(distance,3) +0.834206*Math.pow(distance,2)-34.28626*distance+1511.54148;
         return Math.max(Math.min(rpm,1525),1000);
     }
 
@@ -50,8 +50,14 @@ public class Calculations {
         double angle = -0.000050098*(Math.pow(distance,2))+0.0125441*distance-0.314086;
         return Math.max(Math.min(angle,0.47),0.0);
     }
-
+    public static double getFlightTime(double distance){
+        return 0.4;
+    }
     public static double getTransferSpeed(double distance){
         return -0.00636*distance + 1.1909;
+    }
+
+    public static double getDist(Pose botPose){
+        return Math.hypot(goalPose.getY()-botPose.getY(),goalPose.getX()-botPose.getX());
     }
 }
