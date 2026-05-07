@@ -7,6 +7,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utils.Calculations;
@@ -114,12 +115,13 @@ public class Teleop extends NextFTCOpMode {
         driverControlled.schedule();
         Lift.INSTANCE.holdPlate().schedule();
         Gamepads.gamepad1().circle().whenBecomesTrue(Intake.INSTANCE.runIntake);
-        Gamepads.gamepad1().square().whenBecomesTrue(Intake.INSTANCE.runIntakeReverse);
+        Gamepads.gamepad1().square().whenBecomesTrue(Intake.INSTANCE.runIntakeReverse.and(Transfer.INSTANCE.runTransfer(-1.0))).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
         Gamepads.gamepad1().dpadRight().whenBecomesTrue(Intake.INSTANCE.stopIntake);
         Gamepads.gamepad1().leftBumper().whenBecomesTrue(Transfer.INSTANCE.tapFire());
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(1)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-        Gamepads.gamepad2().circle().whenBecomesTrue(Lift.INSTANCE.lift().and(driverControlled)).whenBecomesFalse(Lift.INSTANCE.holdLift());
+        Gamepads.gamepad2().circle().whenBecomesTrue(Lift.INSTANCE.lift()).whenBecomesFalse(Lift.INSTANCE.holdLift());
         Gamepads.gamepad2().triangle().whenBecomesTrue(Lift.INSTANCE.retract()).whenBecomesFalse(Lift.INSTANCE.holdLift());
+
     }
     @Override
     public void onInit(){
@@ -140,7 +142,7 @@ public class Teleop extends NextFTCOpMode {
             PedroComponent.follower().setStartingPose(new Pose(72,72,Math.toRadians(90)));
         }
         telemetry.update();
-        //Limelight.INSTANCE.limelight.pipelineSwitch(1);
+        Limelight.INSTANCE.limelight.pipelineSwitch(0);
     }
     @Override
     public void onUpdate(){
@@ -155,12 +157,16 @@ public class Teleop extends NextFTCOpMode {
         }
         if(gamepad1.right_trigger_pressed) driverControlled.setScalar(0.25);
         else driverControlled.setScalar(1.0);
-
+        if(gamepad2.touchpadWasPressed()){
+            CommandManager.INSTANCE.cancelAll();
+            driverControlled.schedule();
+        }
         if(gamepad2.dpadUpWasPressed()) moveUp().schedule();
         if(gamepad2.dpadDownWasPressed()) moveDown().schedule();
         if(gamepad2.dpadLeftWasPressed()) moveLeft().schedule();
         if(gamepad2.dpadRightWasPressed()) moveRight().schedule();
         if(gamepad2.squareWasPressed()) park(PedroComponent.follower().getPose()).schedule();
+        if(gamepad2.crossWasPressed()) Turret.INSTANCE.turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if(result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {

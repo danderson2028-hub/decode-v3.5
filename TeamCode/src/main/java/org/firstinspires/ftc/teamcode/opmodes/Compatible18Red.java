@@ -54,8 +54,8 @@ public class Compatible18Red extends NextFTCOpMode {
     private final Pose startPose = new Pose(28.5,128.5  , Math.toRadians(180)).mirror();
     private final Pose shootPose = new Pose(51,93, Math.toRadians(180)).mirror();
     private final Pose intakeMidPose = new Pose(14,58,Math.toRadians(180)).mirror();
-    private final Pose gatePose = new Pose(14,63.5, Math.toRadians(140)).mirror();
-    private final Pose clearGatePose = new Pose(12.5,59, Math.toRadians(120)).mirror();
+    private final Pose gatePose = new Pose(13.5,63.5, Math.toRadians(140)).mirror();
+    private final Pose clearGatePose = new Pose(13.5,59, Math.toRadians(120)).mirror();
     private final Pose shoot2Pose = new Pose(51,93, Math.toRadians(135)).mirror();
     private final Pose intakeClosePose = new Pose(17,85, Math.toRadians(180)).mirror();
     private final Pose leavePose = new Pose(57,108, Math.toRadians(150)).mirror();

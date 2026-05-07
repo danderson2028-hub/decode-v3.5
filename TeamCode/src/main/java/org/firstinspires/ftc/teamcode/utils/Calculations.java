@@ -42,7 +42,7 @@ public class Calculations {
     }
 
     public static double getShooterRPM(double distance){
-        double rpm = 0.0000227932*Math.pow(distance,4)-0.00738406* Math.pow(distance,3) +0.834206*Math.pow(distance,2)-34.28626*distance+1511.54148;
+        double rpm = 0.0000268987*Math.pow(distance,4)-0.00918067* Math.pow(distance,3) +1.07798*Math.pow(distance,2)-46.04816*distance+1651.96334;
         return Math.max(Math.min(rpm,1525),1000);
     }
 

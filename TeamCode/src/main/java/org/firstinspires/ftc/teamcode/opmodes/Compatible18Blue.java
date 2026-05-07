@@ -54,8 +54,8 @@ public class Compatible18Blue extends NextFTCOpMode {
     private final Pose startPose = new Pose(28.5,128.5  , Math.toRadians(180));
     private final Pose shootPose = new Pose(51,93, Math.toRadians(180));
     private final Pose intakeMidPose = new Pose(12,58,Math.toRadians(180));
-    private final Pose gatePose = new Pose(12,63.5, Math.toRadians(140));
-    private final Pose clearGatePose = new Pose(10.5,59, Math.toRadians(120));
+    private final Pose gatePose = new Pose(12,64.5, Math.toRadians(140));
+    private final Pose clearGatePose = new Pose(12,60, Math.toRadians(120));
     private final Pose shoot2Pose = new Pose(51,93, Math.toRadians(135));
     private final Pose intakeClosePose = new Pose(15,84, Math.toRadians(180));
     private final Pose leavePose = new Pose(57,108, Math.toRadians(150));
@@ -120,9 +120,9 @@ public class Compatible18Blue extends NextFTCOpMode {
                 new Delay(.5),
                 Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(gate1,true),
-                new Delay(.5),
+                new Delay(.3),
                 new FollowPath(clear1,true),
-                new Delay(1),
+                new Delay(.9),
                 new ParallelGroup(
                         new FollowPath(shoot3,true),
                         Turret.INSTANCE.runTurretToPosition(0)
@@ -131,17 +131,17 @@ public class Compatible18Blue extends NextFTCOpMode {
                 new Delay(.5),
                 Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(gate2,true),
-                new Delay(.5),
+                new Delay(.3),
                 new FollowPath(clear2,true),
-                new Delay(1),
+                new Delay(.9),
                 new FollowPath(shoot4,true),
                 Transfer.INSTANCE.runTransfer(1.0),
                 new Delay(.5),
                 Transfer.INSTANCE.runTransfer(0.0),
                 new FollowPath(gate2,true),
-                new Delay(.5),
+                new Delay(.3),
                 new FollowPath(clear2,true),
-                new Delay(1),
+                new Delay(.9),
                 new FollowPath(shoot4,true),
                 Transfer.INSTANCE.runTransfer(1.0),
                 new Delay(.5),

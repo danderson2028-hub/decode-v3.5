@@ -45,8 +45,7 @@ public class Transfer implements Subsystem {
         return new SequentialGroup(
                 new SetPower(transfer,1),
                 new Delay(0.04),
-                new SetPower(transfer,0.0),
-                new Delay(0.8)
+                new SetPower(transfer,0.0)
         );
     }
     public Command fireFar(){

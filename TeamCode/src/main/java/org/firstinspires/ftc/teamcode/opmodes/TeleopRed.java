@@ -107,7 +107,7 @@ public class TeleopRed extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-
+        Limelight.INSTANCE.limelight.pipelineSwitch(1);
 
 
         Turret.alignment=true;
@@ -124,7 +124,7 @@ public class TeleopRed extends NextFTCOpMode {
     @Override
     public void onInit(){
         CommandManager.INSTANCE.cancelAll();
-
+        Limelight.INSTANCE.limelight.pipelineSwitch(1);
         frontLeftMotor = new MotorEx("FL").reversed();
         frontRightMotor = new MotorEx("FR");
         backLeftMotor = new MotorEx("BL").reversed();
@@ -141,11 +141,12 @@ public class TeleopRed extends NextFTCOpMode {
         }
 
         telemetry.update();
-        Limelight.INSTANCE.limelight.pipelineSwitch(1);
+
     }
     @Override
     public void onUpdate(){
         LLResult result = Limelight.INSTANCE.getLatestResult();
+
         if(gamepad1.dpad_up) {
             runShooter = true;
             Turret.alignment = true;
@@ -156,7 +157,10 @@ public class TeleopRed extends NextFTCOpMode {
         }
         if(gamepad1.right_trigger_pressed) driverControlled.setScalar(0.25);
         else driverControlled.setScalar(1.0);
-
+        if(gamepad2.touchpadWasPressed()){
+            CommandManager.INSTANCE.cancelAll();
+            driverControlled.schedule();
+        }
         if(gamepad2.dpadUpWasPressed()) moveUp().schedule();
         if(gamepad2.dpadDownWasPressed()) moveDown().schedule();
         if(gamepad2.dpadLeftWasPressed()) moveLeft().schedule();

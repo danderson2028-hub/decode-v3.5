@@ -50,7 +50,7 @@ public class Red18 extends NextFTCOpMode {
     private final Pose shoot2Pose = new Pose(51,93, Math.toRadians(135)).mirror();
     private final Pose intakeFarPose = new Pose(9,36, Math.toRadians(180)).mirror();
     private final Pose intakeClosePose = new Pose(15,83, Math.toRadians(180)).mirror();
-    private final Pose leavePose = new Pose(57,108, Math.toRadians(150)).mirror();
+    private final Pose leavePose = new Pose(57,108, Math.toRadians(155)).mirror();
 
 
 
@@ -103,7 +103,7 @@ public class Red18 extends NextFTCOpMode {
                 new ParallelGroup(
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelClose,
-                        Turret.INSTANCE.runTurretToPosition(-129),
+                        Turret.INSTANCE.runTurretToPosition(-133),
                         new FollowPath(shoot1,true),
                         Hood.INSTANCE.close
 
@@ -141,7 +141,7 @@ public class Red18 extends NextFTCOpMode {
                 new FollowPath(intakeFar,true),
                 new ParallelGroup(
                         new FollowPath(shoot5,true),
-                        Turret.INSTANCE.runTurretToPosition(-129)
+                        Turret.INSTANCE.runTurretToPosition(-133)
                 ),
                 Transfer.INSTANCE.runTransfer(1.0),
                 new Delay(.5),

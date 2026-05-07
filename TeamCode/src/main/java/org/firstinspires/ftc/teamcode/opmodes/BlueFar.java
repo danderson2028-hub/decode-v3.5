@@ -46,7 +46,7 @@ public class BlueFar extends NextFTCOpMode {
     private final Pose preIntakePose = new Pose(36,36,Math.toRadians(180));
     private final Pose intakePose = new Pose(9,36, Math.toRadians(180));
     private final Pose shootPose = new Pose(57.5,15, Math.toRadians(180));
-    private final Pose intakeHumanPose = new Pose(9,8, Math.toRadians(180));
+    private final Pose intakeHumanPose = new Pose(8,8, Math.toRadians(180));
     private final Pose intake2Pose = new Pose(9,12, Math.toRadians(180));
     private final Pose leavePose = new Pose(51,24, Math.toRadians(180));
 
@@ -104,9 +104,9 @@ public class BlueFar extends NextFTCOpMode {
                 new FollowPath(intake,true),
                 new ParallelGroup(
                         new FollowPath(shoot1,true),
-                        Turret.INSTANCE.runTurretToPosition(197)
+                        Turret.INSTANCE.runTurretToPosition(190)
                 ),
-                new Delay(.25),
+                new Delay(.4),
                 Transfer.INSTANCE.fireFar(),
                 new FollowPath(intake2,true),
                 new FollowPath(shoot2,true),

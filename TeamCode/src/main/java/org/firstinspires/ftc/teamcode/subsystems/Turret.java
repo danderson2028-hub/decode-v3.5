@@ -30,12 +30,14 @@ public class Turret implements Subsystem {
     public static double sotmAngularOffset = 0.0;
     private ControlSystem controlSystem = ControlSystem.builder()
             .posPid(0.005,0.0,0.000175)
-            .basicFF(0,0,0.08)
+            .basicFF(0,0,0.05)
             .build();
 
     public Command runTurretToPosition(double position){
         return new RunToPosition(controlSystem,position,30).requires(this);
     }
+
+    
     private enum AlignmentMode{
         Limelight,
         Odometry,

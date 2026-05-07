@@ -23,6 +23,7 @@ public class Shooter implements Subsystem {
     private MotorEx shooter = new MotorEx("shooter");
     private ServoEx light = new ServoEx("light");
 
+    public static boolean atTargetVelocity = false;
 
 
     private ControlSystem controlSystem = ControlSystem.builder()
@@ -30,7 +31,7 @@ public class Shooter implements Subsystem {
             .basicFF(0.00056,0.0,0.0)
             .build();
     public Command runFlywheelClose = new RunToVelocity(controlSystem, 1080,15).requires(this);
-    public Command runFlywheelFar = new RunToVelocity(controlSystem, 1460).requires(this);
+    public Command runFlywheelFar = new RunToVelocity(controlSystem, 1400).requires(this);
 
     public Command stopFlywheel = new RunToVelocity(controlSystem, 0).requires(this);
     public Command calculateFlywheel(double distance){
@@ -45,8 +46,9 @@ public class Shooter implements Subsystem {
     @Override
     public void periodic(){
         shooter.setPower(controlSystem.calculate(new KineticState(shooter.getCurrentPosition(),shooter.getVelocity())));
-        if(controlSystem.isWithinTolerance(new KineticState(POSITIVE_INFINITY, 20,POSITIVE_INFINITY))) light.setPosition(0.5);
-        else light.setPosition(.277);
+        atTargetVelocity = controlSystem.isWithinTolerance(new KineticState(POSITIVE_INFINITY, 25,POSITIVE_INFINITY));
+        if(atTargetVelocity) light.setPosition(0.5);
+        else light.setPosition(.611);
         ActiveOpMode.telemetry().addData("Flywheel Velocity", shooter.getVelocity());
         ActiveOpMode.telemetry().addData("RPM", shooter.getVelocity() * 60 / 28);
         ActiveOpMode.telemetry().addData("Shooter power", controlSystem.calculate(new KineticState(shooter.getCurrentPosition(),shooter.getVelocity())));
