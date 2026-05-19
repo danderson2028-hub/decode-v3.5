@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.Data;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Hood;
@@ -18,7 +19,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
@@ -157,14 +157,14 @@ public class Blue18 extends NextFTCOpMode {
                 Transfer.INSTANCE.fireClose()
 
 
-                );
+        );
 
 
 
     }
     @Override
     public void onInit(){
-        Turret.INSTANCE.turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Turret.INSTANCE.resetEncoder();
         Turret.alignment=false;
         panelsTelemetry.addLine("Initialized");
         panelsTelemetry.update(telemetry);

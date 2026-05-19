@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.Calculations;
 import org.firstinspires.ftc.teamcode.utils.Data;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -18,7 +19,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 import java.util.List;
 
@@ -26,12 +26,9 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.core.units.Angle;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
-import dev.nextftc.extensions.pedro.TurnBy;
-import dev.nextftc.extensions.pedro.TurnTo;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -67,9 +64,9 @@ public class Teleop extends NextFTCOpMode {
     private boolean runShooter = false;
     public double transferPower = 0.5;
     DriverControlledCommand driverControlled = new PedroDriverControlled(
-            Gamepads.gamepad1().rightStickY().negate(),
-            Gamepads.gamepad1().rightStickX().negate(),
-            Gamepads.gamepad1().leftStickX().map(value -> 0.5*value).negate()
+            Gamepads.gamepad2().rightStickY().negate(),
+            Gamepads.gamepad2().rightStickX().negate(),
+            Gamepads.gamepad2().leftStickX().map(value -> 0.5*value).negate()
     );
     public static Follower getFollower(){
         return PedroComponent.follower();
@@ -110,17 +107,17 @@ public class Teleop extends NextFTCOpMode {
     public void onStartButtonPressed() {
 
 
-        Turret.INSTANCE.turret.setCurrentPosition(Data.turretPos);
+        Turret.INSTANCE.setCurrentPosition(Data.turretPos);
         Turret.alignment=true;
         driverControlled.schedule();
         Lift.INSTANCE.holdPlate().schedule();
-        Gamepads.gamepad1().circle().whenBecomesTrue(Intake.INSTANCE.runIntake);
-        Gamepads.gamepad1().square().whenBecomesTrue(Intake.INSTANCE.runIntakeReverse.and(Transfer.INSTANCE.runTransfer(-1.0))).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-        Gamepads.gamepad1().dpadRight().whenBecomesTrue(Intake.INSTANCE.stopIntake);
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(Transfer.INSTANCE.tapFire());
-        Gamepads.gamepad1().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(1)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
-        Gamepads.gamepad2().circle().whenBecomesTrue(Lift.INSTANCE.lift()).whenBecomesFalse(Lift.INSTANCE.holdLift());
-        Gamepads.gamepad2().triangle().whenBecomesTrue(Lift.INSTANCE.retract()).whenBecomesFalse(Lift.INSTANCE.holdLift());
+        Gamepads.gamepad2().circle().whenBecomesTrue(Intake.INSTANCE.runIntake);
+        Gamepads.gamepad2().square().whenBecomesTrue(Intake.INSTANCE.runIntakeReverse.and(Transfer.INSTANCE.runTransfer(-1.0))).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
+        Gamepads.gamepad2().dpadRight().whenBecomesTrue(Intake.INSTANCE.stopIntake);
+        Gamepads.gamepad2().leftBumper().whenBecomesTrue(Transfer.INSTANCE.tapFire());
+        Gamepads.gamepad2().rightBumper().whenBecomesTrue(Transfer.INSTANCE.runTransfer(1)).whenBecomesFalse(Transfer.INSTANCE.runTransfer(0.0));
+        Gamepads.gamepad1().circle().whenBecomesTrue(Lift.INSTANCE.lift()).whenBecomesFalse(Lift.INSTANCE.holdLift());
+        Gamepads.gamepad1().triangle().whenBecomesTrue(Lift.INSTANCE.retract()).whenBecomesFalse(Lift.INSTANCE.holdLift());
 
     }
     @Override
@@ -147,26 +144,26 @@ public class Teleop extends NextFTCOpMode {
     @Override
     public void onUpdate(){
         LLResult result = Limelight.INSTANCE.getLatestResult();
-        if(gamepad1.dpad_up) {
+        if(gamepad2.dpad_up) {
             runShooter = true;
             Turret.alignment = true;
         }
-        if(gamepad1.dpad_down) {
+        if(gamepad2.dpad_down) {
             runShooter = false;
             Turret.alignment = false;
         }
-        if(gamepad1.right_trigger_pressed) driverControlled.setScalar(0.25);
+        if(gamepad2.right_trigger_pressed) driverControlled.setScalar(0.25);
         else driverControlled.setScalar(1.0);
-        if(gamepad2.touchpadWasPressed()){
+        if(gamepad1.touchpadWasPressed()){
             CommandManager.INSTANCE.cancelAll();
             driverControlled.schedule();
         }
-        if(gamepad2.dpadUpWasPressed()) moveUp().schedule();
-        if(gamepad2.dpadDownWasPressed()) moveDown().schedule();
-        if(gamepad2.dpadLeftWasPressed()) moveLeft().schedule();
-        if(gamepad2.dpadRightWasPressed()) moveRight().schedule();
-        if(gamepad2.squareWasPressed()) park(PedroComponent.follower().getPose()).schedule();
-        if(gamepad2.crossWasPressed()) Turret.INSTANCE.turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(gamepad1.dpadUpWasPressed()) moveUp().schedule();
+        if(gamepad1.dpadDownWasPressed()) moveDown().schedule();
+        if(gamepad1.dpadLeftWasPressed()) moveLeft().schedule();
+        if(gamepad1.dpadRightWasPressed()) moveRight().schedule();
+        if(gamepad1.squareWasPressed()) park(PedroComponent.follower().getPose()).schedule();
+        if(gamepad1.crossWasPressed()) Turret.INSTANCE.resetEncoder();
         if(result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {

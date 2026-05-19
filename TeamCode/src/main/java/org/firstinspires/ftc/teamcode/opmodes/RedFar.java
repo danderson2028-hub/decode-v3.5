@@ -10,6 +10,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.Data;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Hood;
@@ -17,7 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
@@ -131,7 +131,7 @@ public class RedFar extends NextFTCOpMode {
     }
     @Override
     public void onInit(){
-        Turret.INSTANCE.turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Turret.INSTANCE.resetEncoder();
         Turret.alignment=false;
         panelsTelemetry.addLine("Initialized");
         panelsTelemetry.update(telemetry);
@@ -152,7 +152,8 @@ public class RedFar extends NextFTCOpMode {
         if(!PedroComponent.follower().getPose().roughlyEquals(new Pose(0,0,0),5)){
             Data.endPose = PedroComponent.follower().getPose();
         }
-        Data.turretPos=Turret.INSTANCE.turret.getCurrentPosition();
+        Data.turretPos=Turret.INSTANCE.getTurretAngleDeg();
+
         panelsTelemetry.update(telemetry);
     }
 
