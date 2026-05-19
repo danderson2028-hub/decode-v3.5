@@ -105,7 +105,7 @@ public class Red15 extends NextFTCOpMode {
                 new ParallelGroup(
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelClose,
-                        Turret.INSTANCE.runTurretToPosition(133),
+                        Turret.INSTANCE.runTurretToPosition(46),
                         new FollowPath(shoot1,true),
                         Hood.INSTANCE.close
 

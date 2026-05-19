@@ -96,7 +96,7 @@ public class BlueFar extends NextFTCOpMode {
                         new FollowPath(clear,true),
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelFar,
-                        Turret.INSTANCE.runTurretToPosition(-65),
+                        Turret.INSTANCE.runTurretToPosition(-22),
                         Hood.INSTANCE.up
                 ),
                 Transfer.INSTANCE.fireFar(),
@@ -104,7 +104,7 @@ public class BlueFar extends NextFTCOpMode {
                 new FollowPath(intake,true),
                 new ParallelGroup(
                         new FollowPath(shoot1,true),
-                        Turret.INSTANCE.runTurretToPosition(190)
+                        Turret.INSTANCE.runTurretToPosition(66)
                 ),
                 new Delay(.4),
                 Transfer.INSTANCE.fireFar(),

@@ -96,7 +96,7 @@ public class RedFar extends NextFTCOpMode {
                         new FollowPath(clear,true),
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelFar,
-                        Turret.INSTANCE.runTurretToPosition(70),
+                        Turret.INSTANCE.runTurretToPosition(24),
                         Hood.INSTANCE.up
                 ),
                 Transfer.INSTANCE.fireFar(),
@@ -104,7 +104,7 @@ public class RedFar extends NextFTCOpMode {
                 new FollowPath(intake,true),
                 new ParallelGroup(
                         new FollowPath(shoot1,true),
-                        Turret.INSTANCE.runTurretToPosition(-197)
+                        Turret.INSTANCE.runTurretToPosition(-68)
                 ),
                 new Delay(.25),
                 Transfer.INSTANCE.fireFar(),

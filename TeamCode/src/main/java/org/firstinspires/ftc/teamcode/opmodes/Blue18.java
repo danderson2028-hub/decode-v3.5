@@ -112,7 +112,7 @@ public class Blue18 extends NextFTCOpMode {
                 new ParallelGroup(
                         Intake.INSTANCE.runIntake,
                         Shooter.INSTANCE.runFlywheelClose,
-                        Turret.INSTANCE.runTurretToPosition(133),
+                        Turret.INSTANCE.runTurretToPosition(46),
                         new FollowPath(shoot1,true),
                         Hood.INSTANCE.close
 
@@ -145,7 +145,7 @@ public class Blue18 extends NextFTCOpMode {
                 new FollowPath(intakeFar,true),
                 new ParallelGroup(
                         new FollowPath(shoot5,true),
-                        Turret.INSTANCE.runTurretToPosition(133)
+                        Turret.INSTANCE.runTurretToPosition(46)
                 ),
                 Transfer.INSTANCE.fireClose(),
 
