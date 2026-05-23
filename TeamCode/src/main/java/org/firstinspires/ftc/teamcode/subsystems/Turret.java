@@ -19,7 +19,7 @@ import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.FeedbackCRServoEx;
 
-public class Turret implements Subsystem {
+ public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
 
     private Turret() {
@@ -133,4 +133,6 @@ public class Turret implements Subsystem {
         turretTwo.setPower(-power);
     }
 }
+
+
 

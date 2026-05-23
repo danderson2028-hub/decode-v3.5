@@ -31,10 +31,14 @@ public class Autoaim extends NextFTCOpMode {
     public static double hoodAngle = 0.0;
 
     private MotorEx flywheel;
+
+    private MotorEx flywheelTwo;
+
     private Servo hood;
 
     public void onInit() {
         flywheel = new MotorEx("shooter");
+        flywheelTwo = new MotorEx("shooterTwo");
         hood = hardwareMap.get(Servo.class, "hood");
 
         panelsTelemetry.addLine("Flywheel + Hood Teleop Initialized");
@@ -45,6 +49,7 @@ public class Autoaim extends NextFTCOpMode {
     public void onUpdate() {
         // Directly set flywheel power from dashboard value
         flywheel.setPower(Math.max(-1.0, Math.min(1.0, flywheelPower)));
+        flywheelTwo.setPower(Math.max(-1.0, Math.min(1.0, flywheelPower)));
 
         // Set hood angle from dashboard value
         hood.setPosition(Math.max(0.0, Math.min(1.0, hoodAngle)));
