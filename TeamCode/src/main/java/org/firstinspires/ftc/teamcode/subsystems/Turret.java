@@ -61,12 +61,12 @@ import dev.nextftc.hardware.impl.FeedbackCRServoEx;
 
     }
 
-    double totalAngle = 0.0;
+    double servoPosRadians = 0.0;
     double previousAngle = 0.0;
 
     public void resetEncoder() {
         previousAngle = turretOne.getCurrentPosition(); // sync to current so next delta = 0
-        totalAngle = 0.0;
+        servoPosRadians = 0.0;
     }
 
     public void updatePosition() {
@@ -76,19 +76,26 @@ import dev.nextftc.hardware.impl.FeedbackCRServoEx;
         if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
         else if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
 
-        totalAngle += deltaAngle;
+        servoPosRadians += deltaAngle;
+
         previousAngle = currentAngle;
     }
 
     public double getTurretAngleDeg() {
-        return Math.toDegrees(totalAngle);
+        return (Math.toDegrees(servoPosRadians)) / 2.85;
+    }
+
+    public double getServoPosDegrees()  {
+        return  (Math.toDegrees(servoPosRadians));
     }
 
     public void setCurrentPosition(double degrees) {
-        totalAngle = Math.toRadians(degrees);
+        servoPosRadians = Math.toRadians(degrees);
         previousAngle = turretOne.getCurrentPosition();
     }
 
+
+    // 360 servo degrees is 126 turret degrees
     @Override
     public void periodic () {
         updatePosition();
@@ -104,21 +111,21 @@ import dev.nextftc.hardware.impl.FeedbackCRServoEx;
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
                         double adjustedTx = fr.getTargetXDegrees(); // <-- apply offset
-                        double target = MathFunctions.clamp(Math.toDegrees(totalAngle) + adjustedTx, -170, 170); // totalAngle
+                        double target = MathFunctions.clamp((getTurretAngleDeg() + adjustedTx) * 2.85, -170, 170); // totalAngle
 
                         if (Math.abs(adjustedTx) > 2) {
-                            controlSystem.setGoal(new KineticState(target, Math.signum(target - Math.toDegrees(totalAngle))));
+                            controlSystem.setGoal(new KineticState(target, Math.signum(target - Math.toDegrees(servoPosRadians))));
                         }
 
 
                     }
-                } else controlSystem.setGoal(new KineticState(Math.toDegrees(totalAngle), 0));
+                } else controlSystem.setGoal(new KineticState(Math.toDegrees(servoPosRadians), 0));
 
                 break;
             case Odometry:
                 Pose currentPose = Teleop.getFollower().getPose();
                 double targetDeg = MathFunctions.clamp(Calculations.getTurretAngle(currentPose), -170, 170);
-                controlSystem.setGoal(new KineticState(targetDeg, Math.signum(targetDeg - Math.toDegrees(totalAngle))));
+                controlSystem.setGoal(new KineticState(targetDeg, Math.signum(targetDeg - Math.toDegrees(servoPosRadians))));
                 break;
             case OFF:
                 break;
@@ -127,8 +134,8 @@ import dev.nextftc.hardware.impl.FeedbackCRServoEx;
 
         ActiveOpMode.telemetry().addData("Align mode", state);
         ActiveOpMode.telemetry().addData("Auto Align", alignment);
-        ActiveOpMode.telemetry().addData("Turret Pos (deg)", Math.toDegrees(totalAngle));
-        double power = controlSystem.calculate(new KineticState(Math.toDegrees(totalAngle), turretOne.getVelocity()));
+        ActiveOpMode.telemetry().addData("Servo Pos (deg)", Math.toDegrees(servoPosRadians));
+        double power = controlSystem.calculate(new KineticState(Math.toDegrees(servoPosRadians), turretOne.getVelocity()));
         turretOne.setPower(power);
         turretTwo.setPower(-power);
     }
