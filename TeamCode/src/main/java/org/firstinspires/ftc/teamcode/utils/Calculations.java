@@ -25,11 +25,11 @@ public class Calculations {
         // Convert to degrees
         double angleDeg = Math.toDegrees(turretAngle);
 
-        // Scale to motor ticks
-        double turretTarget = angleDeg * -2.872;
+        // Scale to servo deg
+        double turretTarget = angleDeg * 2.85;
 
         // Apply limits
-        turretTarget = Math.max(-250, Math.min(250, turretTarget));
+        turretTarget = Math.max(-270, Math.min(270, turretTarget));
 
         return turretTarget;
     }
