@@ -9,29 +9,17 @@ public class Calculations {
     public static Pose blueGoalPose = new Pose(16.0, 132.0);
 
     public static Pose goalPose = redGoalPose;
-    public static double getTurretAngle(Pose botPose){
-        // Calculate angle from robot to target
+    public static double getTurretAngle(Pose botPose) {
         double fieldAngle = Math.atan2(
                 goalPose.getY() - botPose.getY(),
                 goalPose.getX() - botPose.getX()
         );
-
-        // Calculate turret angle relative to robot
         double turretAngle = fieldAngle - botPose.getHeading();
-
-        // Normalize to [-π, π]
         turretAngle = normalizeAngle(turretAngle);
-
-        // Convert to degrees
         double angleDeg = Math.toDegrees(turretAngle);
 
-        // Scale to servo deg
-        double turretTarget = angleDeg * 2.85;
-
-        // Apply limits
-        turretTarget = Math.max(-270, Math.min(270, turretTarget));
-
-        return turretTarget;
+        // Clamp to real turret degrees, no scaling
+        return Math.max(-94.7, Math.min(94.7, angleDeg)); // ±270 servo deg limit for now
     }
 
     // Helper method to normalize angle to [-π, π]
